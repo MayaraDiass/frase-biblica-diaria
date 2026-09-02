@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frase Bíblica do Dia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .data {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .dia-numero {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .frase-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .frase-texto {
+            color: white;
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .frase-referencia {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .compartilhar {
+            background: #10b981;
+        }
+
+        .compartilhar:hover {
+            background: #059669;
+        }
+
+        .footer {
+            color: #999;
+            font-size: 12px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .frase-texto {
+                font-size: 18px;
+            }
+
+            .frase-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ Frase do Dia ✨</h1>
+            <div class="data" id="dataAtual"></div>
+            <div class="dia-numero">Dia <span id="diaDoAno">1</span> de 365</div>
+        </div>
+
+        <div class="frase-container">
+            <div class="frase-texto" id="fraseTexto"></div>
+            <div class="frase-referencia" id="fraseReferencia"></div>
+        </div>
+
+        <div class="botoes">
+            <button onclick="fraseAnterior()">← Anterior</button>
+            <button class="compartilhar" onclick="compartilhar()">📤 Compartilhar</button>
+            <button onclick="proximaFrase()">Próxima →</button>
+        </div>
+
+        <div class="footer">
+            <p>Uma frase inspiradora para cada dia do ano 📖</p>
+        </div>
+    </div>
+
+    <script>
+        const frases = [
+            { texto: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito.", referencia: "João 3:16" },
+            { texto: "O amor nunca falha, ainda que os dons cessem.", referencia: "1 Coríntios 13:8" },
+            { texto: "Amados, amemos uns aos outros, pois o amor é de Deus.", referencia: "1 João 4:7" },
+            { texto: "Amai vossos inimigos, bendizei os que vos maldizem.", referencia: "Mateus 5:44" },
+            { texto: "Ninguém tem maior amor do que aquele que dá a vida pelos seus amigos.", referencia: "João 15:13" },
+            { texto: "Se eu falar a língua dos homens e dos anjos, mas não tiver amor, serei como o bronze que soa ou sino que tine.", referencia: "1 Coríntios 13:1" },
+            { texto: "E agora permanecem a fé, a esperança e o amor, estes três; porém o maior destes é o amor.", referencia: "1 Coríntios 13:13" },
+            { texto: "O amor cobre uma multidão de pecados.", referencia: "1 Pedro 4:8" },
+            { texto: "Sê forte e corajoso! Não tenhas medo, pois o Senhor, teu Deus, está contigo aonde quer que vás.", referencia: "Josué 1:9" },
+            { texto: "Posso tudo em Cristo que me fortalece.", referencia: "Filipenses 4:13" },
+            { texto: "Não temas, porque eu sou contigo; não te assombres, porque eu sou teu Deus.", referencia: "Isaías 41:10" },
+            { texto: "Confie no Senhor de todo o seu coração e não se apoie em seu próprio entendimento.", referencia: "Provérbios 3:5" },
+            { texto: "Se o Senhor está conosco, quem estará contra nós?", referencia: "Romanos 8:31" },
+            { texto: "Tudo posso naquele que me fortalece.", referencia: "Filipenses 4:13" },
+            { texto: "O Senhor é minha luz e minha salvação, a quem temerei?", referencia: "Salmo 27:1" },
+            { texto: "Graças ao Deus que sempre nos faz triunfar em Cristo.", referencia: "2 Coríntios 2:14" },
+            { texto: "Porque maiores são os que estão conosco do que os que estão com eles.", referencia: "2 Reis 6:16" },
+            { texto: "Dar mais bem-aventurado que receber.", referencia: "Atos 20:35" },
+            { texto: "Agradeça ao Senhor por sua bondade; sua amor dura para sempre.", referencia: "Salmo 107:1" },
+            { texto: "Que Deus abençoe você e o guarde.", referencia: "Números 6:24" },
+            { texto: "Vocês foram comprados por preço; não se tornem servos de homens.", referencia: "1 Coríntios 7:23" },
+            { texto: "Porque para mim o viver é Cristo, e o morrer é lucro.", referencia: "Filipenses 1:21" },
+            { texto: "A graça de Nosso Senhor Jesus Cristo, o amor de Deus, e a comunhão do Espírito Santo sejam com todos vós.", referencia: "2 Coríntios 13:14" },
+            { texto: "Deixe a paz de Cristo governar em seu coração.", referencia: "Colossenses 3:15" },
+            { texto: "O Senhor abençoa os que confiam Nele.", referencia: "Salmo 40:4" },
+            { texto: "Porque pela graça sois salvos, por meio da fé; e isto não vem de vós, é dom de Deus.", referencia: "Efésios 2:8" },
+            { texto: "Se confessarmos os nossos pecados, Ele é fiel e justo para nos perdoar.", referencia: "1 João 1:9" },
+            { texto: "Exultarei, porque espero no seu amor.", referencia: "Salmo 13:5" },
+            { texto: "Ainda que eu ande pelo vale da sombra da morte, não temerei mal algum.", referencia: "Salmo 23:4" },
+            { texto: "O amor perfeito expulsa o medo.", referencia: "1 João 4:18" },
+            { texto: "Deus não é Deus de confusão, mas de paz.", referencia: "1 Coríntios 14:33" },
+            { texto: "Encomendar ao Senhor a sua sorte e confiar Nele.", referencia: "Salmo 37:5" },
+            { texto: "Como está o meu Deus, posso vencer toda provação.", referencia: "2 Coríntios 9:8" },
+            { texto: "Clamei ao Senhor quando estava em angústia, e Ele ouviu.", referencia: "Salmo 120:1" },
+            { texto: "Bendirei ao Senhor em todo tempo; o seu louvor estará sempre nos meus lábios.", referencia: "Salmo 34:1" },
+            { texto: "O fruto do Espírito é: amor, alegria, paz, paciência, amabilidade, bondade, fidelidade, mansidão e domínio próprio.", referencia: "Gálatas 5:22-23" },
+            { texto: "Sejam sempre alegres. Rezem sem parar. Em tudo tenham gratidão.", referencia: "1 Tessalonicenses 5:16-18" },
+            { texto: "Porque Deus não nos deu espírito de covardia, mas de poder, amor e domínio próprio.", referencia: "2 Timóteo 1:7" },
+            { texto: "A paz vos deixo, a minha paz vos dou.", referencia: "João 14:27" },
+            { texto: "Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos darei descanso.", referencia: "Mateus 11:28" },
+            { texto: "Quem quiser me seguir, renuncie a si mesmo, tome a sua cruz e siga-me.", referencia: "Mateus 16:24" },
+            { texto: "Ouvintes da palavra será abençoado naquilo que fizer.", referencia: "Tiago 1:25" },
+            { texto: "A sabedoria que vem do alto é, primeiramente, pura; depois pacífica.", referencia: "Tiago 3:17" },
+            { texto: "Mas o caminho dos justos é como a luz da alva, que vai brilhando mais e mais até ser dia perfeito.", referencia: "Provérbios 4:18" },
+            { texto: "Porque Dele e por Dele, e para Dele são todas as coisas.", referencia: "Romanos 11:36" },
+            { texto: "Levanta os teus olhos para os montes; de onde vem o teu socorro.", referencia: "Salmo 121:1" },
+            { texto: "A esperança não decepciona, porque o amor de Deus é derramado em nossos corações.", referencia: "Romanos 5:5" },
+            { texto: "Deus é o nosso refúgio e força, um muito presente ajudador na angústia.", referencia: "Salmo 46:1" },
+            { texto: "Porque Nele vivemos, nos movemos e existimos.", referencia: "Atos 17:28" },
+            { texto: "Confiem no Senhor com todo o seu coração e reconheçam-no em todos os seus caminhos.", referencia: "Provérbios 3:5-6" },
+            { texto: "O louvor é formoso para os retos.", referencia: "Salmo 33:1" },
+            { texto: "Bem-aventurados os que ouvem a palavra de Deus e a guardam.", referencia: "Lucas 11:28" },
+            { texto: "Eu sou a videira, vós as varas; quem fica em mim e eu Nele, esse sim leva muito fruto.", referencia: "João 15:5" },
+            { texto: "Tudo que pedirdes em oração, crendo, o recebereis.", referencia: "Mateus 21:22" },
+            { texto: "Seja feita a Tua vontade, assim na terra como no céu.", referencia: "Mateus 6:10" },
+            { texto: "Aquele que crê no Filho tem a vida eterna.", referencia: "João 3:36" },
+            { texto: "Mais bem-aventurado é dar do que receber.", referencia: "Atos 20:35" },
+            { texto: "Porque o julgamento sem misericórdia será sobre o que não fez misericórdia.", referencia: "Tiago 2:13" },
+            { texto: "O dom de Deus é a vida eterna em Cristo Jesus nosso Senhor.", referencia: "Romanos 6:23" },
+            { texto: "Se a Deus agradamos, Nele confiamos e não tememos o mal.", referencia: "Salmo 23:4" },
+            { texto: "O Senhor é clemente e misericordioso, vagaroso em iras e grande em benevolência.", referencia: "Salmo 145:8" },
+            { texto: "Bendito aquele cuja esperança está no Senhor seu Deus.", referencia: "Salmo 146:5" },
+            { texto: "A verdade vos libertará.", referencia: "João 8:32" },
+            { texto: "O coração confiante em Deus é forte.", referencia: "Salmo 37:40" },
+            { texto: "A alegria do Senhor é a vossa fortaleza.", referencia: "Neemias 8:10" },
+            { texto: "Porque dele, por ele e para ele são todas as coisas. A ele seja a glória eternamente.", referencia: "Romanos 11:36" },
+            { texto: "Nada é impossível para Deus.", referencia: "Lucas 1:37" },
+            { texto: "A oração fervorosa do justo tem muito poder.", referencia: "Tiago 5:16" },
+            { texto: "Portanto, não temas, porque estou contigo; não te assombres, porque sou teu Deus.", referencia: "Isaías 41:10" },
+            { texto: "O Senhor me ilumina e me salva; a quem temerei?", referencia: "Salmo 27:1" },
+            { texto: "Porque por Ele fomos reconciliados com Deus.", referencia: "Romanos 5:10" },
+            { texto: "A graça e a misericórdia do Senhor não se extinguem.", referencia: "Lamentações 3:22" },
+            { texto: "Cantarei ao Senhor enquanto eu viver; louvarei meu Deus enquanto eu tiver ser.", referencia: "Salmo 104:33" },
+            { texto: "O Senhor é a minha rocha, minha fortaleza e meu libertador.", referencia: "Salmo 18:2" },
+            { texto: "Porque Deus operou em vós tanto o querer como o efetuar, segundo a sua boa vontade.", referencia: "Filipenses 2:13" },
+            { texto: "Feliz aquele cujo Deus é o Senhor.", referencia: "Salmo 144:15" },
+            { texto: "Glória seja a Deus, pela sua infinita misericórdia.", referencia: "Efésios 1:3" },
+            { texto: "Porque para com Deus todas as coisas são possíveis.", referencia: "Mateus 19:26" },
+            { texto: "De Deus vem toda boa dádiva e todo dom perfeito.", referencia: "Tiago 1:17" },
+            { texto: "Porque o Senhor é bom e a sua misericórdia dura para sempre.", referencia: "Salmo 100:5" },
+            { texto: "Bem-aventurados os puros de coração, porque verão a Deus.", referencia: "Mateus 5:8" },
+            { texto: "O Senhor exalta o humilde e abate o soberbo.", referencia: "Lucas 1:52" },
+            { texto: "Regozijem-se sempre no Senhor. Digo novamente: regozijem-se!", referencia: "Filipenses 4:4" },
+            { texto: "Porque Ele vive, eu também vivarei.", referencia: "João 14:19" },
+            { texto: "Nenhuma tentação o surpreendeu senão aquela comum aos homens; e Deus é fiel.", referencia: "1 Coríntios 10:13" },
+            { texto: "A verdade de Deus permanece para sempre.", referencia: "Salmo 100:5" },
+            { texto: "Porque a vontade de Deus é a vossa santificação.", referencia: "1 Tessalonicenses 4:3" },
+            { texto: "Bem-aventurados os mansos, porque eles herdarão a terra.", referencia: "Mateus 5:5" },
+            { texto: "Bem-aventurados os que choram, porque serão consolados.", referencia: "Mateus 5:4" },
+            { texto: "Bem-aventurados os famintos de justiça, porque serão fartos.", referencia: "Mateus 5:6" },
+            { texto: "Porque nEle vivemos, nos movemos, e existimos.", referencia: "Atos 17:28" },
+            { texto: "A minha graça te é suficiente, porque o poder se aperfeiçoa na fraqueza.", referencia: "2 Coríntios 12:9" },
+            { texto: "Bem-aventurados os misericordiosos, porque alcançarão misericórdia.", referencia: "Mateus 5:7" },
+            { texto: "Bem-aventurados os pacificadores, porque serão chamados filhos de Deus.", referencia: "Mateus 5:9" },
+            { texto: "Bem-aventurados os que são perseguidos por causa da justiça, porque deles é o reino dos céus.", referencia: "Mateus 5:10" },
+            { texto: "Porque Deus amou o mundo de tal maneira que deu seu Filho único.", referencia: "João 3:16" },
+            { texto: "Pela fé nos aproximamos de Deus.", referencia: "Hebreus 10:22" },
+            { texto: "Porque a fé é o fundamento das coisas que se esperam.", referencia: "Hebreus 11:1" },
+            { texto: "Se confessarmos os nossos pecados, ele é fiel e justo para nos perdoar.", referencia: "1 João 1:9" },
+            { texto: "Porque você é precioso aos meus olhos e honrado e eu vos amo.", referencia: "Isaías 43:4" },
+            { texto: "A esperança não decepciona, porque o amor de Deus é derramado em nossos corações.", referencia: "Romanos 5:5" },
+            { texto: "O que vier a mim de forma nenhuma o lançarei fora.", referencia: "João 6:37" },
+            { texto: "Porque ninguém pode vir a mim se não fosse atraído pelo Pai.", referencia: "João 6:44" },
+            { texto: "A vida eterna é conhecer-te, a ti, único Deus verdadeiro.", referencia: "João 17:3" },
+            { texto: "Portanto se alguém está em Cristo, nova criatura é.", referencia: "2 Coríntios 5:17" },
+            { texto: "Porque a sabedoria do mundo é loucura diante de Deus.", referencia: "1 Coríntios 3:19" },
+            { texto: "Bem-aventurado o que lê e os que ouvem as palavras desta profecia.", referencia: "Apocalipse 1:3" },
+            { texto: "Por isso humilhem-se sob a poderosa mão de Deus, para que ele os exalte no tempo certo.", referencia: "1 Pedro 5:6" },
+            { texto: "Portanto, como eleitos de Deus, revistam-se de compaixão, bondade, humildade, mansidão e paciência.", referencia: "Colossenses 3:12" },
+            { texto: "Porque foi pela graça que vocês foram salvos, por meio da fé.", referencia: "Efésios 2:8" },
+            { texto: "Sejam fortes e corajosos, pois o Senhor Deus está com você.", referencia: "Deuteronômio 31:6" },
+            { texto: "Porque o fim de todas as coisas está próximo. Portanto, sejam prudentes e vigiem.", referencia: "1 Pedro 4:7" },
+            { texto: "Porque é melhor dar do que receber.", referencia: "Atos 20:35" },
+            { texto: "O Senhor guarda todos os que o amam.", referencia: "Salmo 145:20" },
+            { texto: "Porque dele é o reino, e o poder, e a glória, para todo o sempre.", referencia: "Mateus 6:13" },
+            { texto: "Porque a vontade de Deus é a vossa santificação.", referencia: "1 Tessalonicenses 4:3" },
+            { texto: "Que toda a glória seja dada a Deus eternamente.", referencia: "Romanos 16:27" },
+            { texto: "Bem-aventurado o homem que confia no Senhor.", referencia: "Jeremias 17:7" },
+            { texto: "Porque para Deus toda coisa é possível.", referencia: "Marcos 14:36" },
+            { texto: "Pela misericórdia e verdade do Senhor somos restaurados.", referencia: "Salmo 85:10" },
+            { texto: "Porque somos o templo do Deus vivo.", referencia: "2 Coríntios 6:16" },
+            { texto: "Porque Deus trabalha todas as coisas para o bem daqueles que o amam.", referencia: "Romanos 8:28" },
+            { texto: "Que o Deus da paz seja com todos vós.", referencia: "Filipenses 4:9" },
+            { texto: "Porque aquele que começou boa obra em vós há de completá-la.", referencia: "Filipenses 1:6" },
+            { texto: "Se pedirdes algo em meu nome, o farei.", referencia: "João 14:14" },
+            { texto: "Porque quem crê em mim, fará também as obras que eu faço.", referencia: "João 14:12" },
+            { texto: "Porque eu sou o caminho, a verdade e a vida.", referencia: "João 14:6" },
+            { texto: "Porque eu cumpri o que o Pai me mandou fazer.", referencia: "João 19:30" },
+            { texto: "Porque pelo seu poder todas as coisas subsistem.", referencia: "Colossenses 1:17" },
+            { texto: "Porque nenhuma palavra é impossível para Deus.", referencia: "Lucas 1:37" },
+            { texto: "Porque Deus não é Deus de confusão, mas de paz.", referencia: "1 Coríntios 14:33" },
+            { texto: "Porque somos filhos de Deus por fé em Cristo.", referencia: "Gálatas 3:26" },
+            { texto: "Porque a justiça de Deus é revelada de fé em fé.", referencia: "Romanos 1:17" },
+            { texto: "Porque a vida é um dom de Deus.", referencia: "Romanos 6:23" },
+            { texto: "Porque Deus é fiel e digno de confiança.", referencia: "1 Tessalonicenses 5:24" },
+            { texto: "Porque em Cristo todas as coisas subsistem.", referencia: "Colossenses 1:17" },
+            { texto: "Porque a lei do Senhor é perfeita e renova a alma.", referencia: "Salmo 19:7" },
+            { texto: "Porque os nossos pecados são perdoados em Cristo.", referencia: "Colossenses 1:14" },
+            { texto: "Porque a misericórdia de Deus é grande.", referencia: "Salmo 86:13" },
+            { texto: "Porque Deus quer que todos os homens se salvem e venham ao conhecimento da verdade.", referencia: "1 Timóteo 2:4" },
+            { texto: "Porque a fé sem obras é morta.", referencia: "Tiago 2:26" },
+            { texto: "Porque Deus não habita em templos feitos por mãos de homens.", referencia: "Atos 17:24" },
+            { texto: "Porque pela graça somos salvos, não por nossas obras.", referencia: "Efésios 2:8-9" },
+            { texto: "Porque aquele que está em vós é maior do que o que está no mundo.", referencia: "1 João 4:4" },
+            { texto: "Porque o Deus de paz esmagará em breve o Satanás debaixo dos vossos pés.", referencia: "Romanos 16:20" },
+            { texto: "Porque todos nós somos um em Cristo.", referencia: "Gálatas 3:28" },
+            { texto: "Porque ninguém é condenado em Cristo.", referencia: "Romanos 8:1" },
+            { texto: "Porque nada pode separar do amor de Deus.", referencia: "Romanos 8:38-39" },
+            { texto: "Porque o Espírito Santo nos testifica que somos filhos de Deus.", referencia: "Romanos 8:16" },
+            { texto: "Porque a morte é vencida pela ressurreição de Cristo.", referencia: "1 Coríntios 15:57" },
+            { texto: "Porque somos co-herdeiros com Cristo.", referencia: "Romanos 8:17" },
+            { texto: "Porque o vosso trabalho no Senhor não é em vão.", referencia: "1 Coríntios 15:58" },
+            { texto: "Porque vós sois a carta de Cristo ministrada por nós.", referencia: "2 Coríntios 3:3" },
+            { texto: "Porque a palavra de Deus é viva e eficaz.", referencia: "Hebreus 4:12" },
+            { texto: "Porque Deus não deu a vós espírito de covardia.", referencia: "2 Timóteo 1:7" },
+            { texto: "Porque Deus é amor e quem habita no amor habita em Deus.", referencia: "1 João 4:8" },
+            { texto: "Porque ele morreu pelos nossos pecados e ressuscitou para nossa justificação.", referencia: "Romanos 4:25" },
+            { texto: "Porque quem vencer herdará todas as coisas.", referencia: "Apocalipse 21:7" },
+            { texto: "Porque a vida dos justos é protegida pelo Senhor.", referencia: "Salmo 37:17" },
+            { texto: "Porque o Senhor é escudo e recompensa do justo.", referencia: "Salmo 84:11" },
+            { texto: "Porque a justiça será recompensada e a maldade será punida.", referencia: "Malaquias 3:5" },
+            { texto: "Porque o Senhor cumpre todas as suas promessas.", referencia: "Salmo 145:13" },
+            { texto: "Porque nada é oculto diante de Deus.", referencia: "Hebreus 4:13" },
+            { texto: "Porque a verdade de Deus permanece para sempre.", referencia: "1 Pedro 1:24-25" },
+            { texto: "Porque a gloria de Deus é revelada na criação.", referencia: "Romanos 1:20" },
+            { texto: "Porque Deus salva os humildes e abate os soberbos.", referencia: "Salmo 18:27" },
+            { texto: "Porque a bênção do Senhor torna rico.", referencia: "Provérbios 10:22" },
+            { texto: "Porque a palavra de Deus não pode ser quebrada.", referencia: "João 10:35" },
+            { texto: "Porque em Cristo estamos completos.", referencia: "Colossenses 2:10" },
+            { texto: "Porque Deus elegeu os fracos para envergonhar os fortes.", referencia: "1 Coríntios 1:27" },
+            { texto: "Porque a revelação de Deus foi feita conhecida a todos os gentios.", referencia: "Romanos 16:26" },
+            { texto: "Porque fomos redimidos não com prata ou ouro, mas com o precioso sangue de Cristo.", referencia: "1 Pedro 1:18-19" },
+            { texto: "Porque o nosso Deus é clemente e compassivo.", referencia: "Nó 9:31" },
+            { texto: "Porque o Senhor resgata a vida dos seus servos.", referencia: "Salmo 34:22" },
+            { texto: "Porque os justos herdarão a terra e nela habitarão para sempre.", referencia: "Salmo 37:29" },
+            { texto: "Porque a voz do Senhor é poderosa e cheia de majestade.", referencia: "Salmo 29:4" },
+            { texto: "Porque a mão do Senhor é poderosa em suas obras.", referencia: "Salmo 111:6" },
+            { texto: "Porque o conhecimento da glória de Deus encherá a terra.", referencia: "Habacuque 2:14" },
+            { texto: "Porque Deus é exaltado acima de todas as nações.", referencia: "Salmo 113:4" },
+            { texto: "Porque a verdade do Senhor é eterna.", referencia: "Salmo 117:2" },
+            { texto: "Porque Deus é grande e digno de todo louvor.", referencia: "Salmo 145:3" },
+            { texto: "Porque a majestade de Deus é insondável.", referencia: "Salmo 145:6" },
+            { texto: "Porque Deus é infinito em poder e em compreensão.", referencia: "Salmo 147:5" },
+            { texto: "Porque Deus delicia-se na piedade e na verdade.", referencia: "Provérbios 12:22" },
+            { texto: "Porque a sabedoria de Deus é insondável.", referencia: "Romanos 11:33" },
+            { texto: "Porque Deus conhece o número dos dias que nos designou.", referencia: "Jó 14:5" },
+            { texto: "Porque Deus tem cuidado de vós segundo sua palavra.", referencia: "1 Pedro 5:7" },
+            { texto: "Porque Deus é fiel em todas as suas palavras.", referencia: "Salmo 145:13" },
+            { texto: "Porque em Deus confiamos durante toda a nossa vida.", referencia: "Salmo 71:5" },
+            { texto: "Porque Deus é nosso refúgio e força eternamente.", referencia: "Salmo 46:1" },
+            { texto: "Porque nada nos separará do amor de Deus em Cristo.", referencia: "Romanos 8:38-39" },
+            { texto: "Porque a vontade de Deus é boa, agradável e perfeita.", referencia: "Romanos 12:2" },
+            { texto: "Porque todo o poder nos foi dado por Cristo.", referencia: "Mateus 28:18" },
+            { texto: "Porque Cristo é a cabeça da Igreja, seu corpo.", referencia: "Efésios 1:22-23" },
+            { texto: "Porque Cristo é a imagem do Deus invisível.", referencia: "Colossenses 1:15" },
+            { texto: "Porque Cristo é o primeiro e o último.", referencia: "Apocalipse 1:17" },
+            { texto: "Porque Cristo é o Rei dos reis e Senhor dos senhores.", referencia: "Apocalipse 19:16" },
+            { texto: "Porque Cristo é o caminho, a verdade e a vida.", referencia: "João 14:6" },
+            { texto: "Porque Cristo nos amou e se entregou por nós.", referencia: "Efésios 5:2" },
+            { texto: "Porque Cristo ressuscitou e está assentado à direita de Deus.", referencia: "Romanos 8:34" },
+            { texto: "Porque Cristo virá outra vez para levar os seus.", referencia: "João 14:3" },
+            { texto: "Porque Cristo é a esperança da glória.", referencia: "Colossenses 1:27" },
+            { texto: "Porque Cristo é o mediador entre Deus e os homens.", referencia: "1 Timóteo 2:5" },
+            { texto: "Porque Cristo é o Verbo que se fez carne.", referencia: "João 1:14" },
+            { texto: "Porque Cristo é a semente de Abraão em quem todas as nações serão benditas.", referencia: "Gálatas 3:16" },
+            { texto: "Porque Cristo é o Sumo Sacerdote que intercede por nós.", referencia: "Hebreus 7:25" },
+            { texto: "Porque Cristo é a videira verdadeira e nós os ramos.", referencia: "João 15:5" },
+            { texto: "Porque Cristo é o pão da vida que satisfaz a fome eterna.", referencia: "João 6:35" },
+            { texto: "Porque Cristo é a água da vida que mata a sede eterna.", referencia: "João 4:14" },
+            { texto: "Porque Cristo é a luz do mundo e dissipar as trevas.", referencia: "João 8:12" },
+            { texto: "Porque Cristo é a porta pela qual entramos para ser salvos.", referencia: "João 10:9" },
+            { texto: "Porque Cristo é o bom pastor que cuida das suas ovelhas.", referencia: "João 10:11" },
+            { texto: "Porque Cristo é a ressurreição e a vida eterna.", referencia: "João 11:25-26" },
+            { texto: "Porque Cristo é o Cordeiro de Deus que tira o pecado do mundo.", referencia: "João 1:29" },
+            { texto: "Porque Cristo é nossa paz que nos une a Deus.", referencia: "Efésios 2:14" },
+            { texto: "Porque Cristo é a propiciação por nossos pecados.", referencia: "1 João 2:2" },
+            { texto: "Porque Cristo é o nosso Salvador e Senhor.", referencia: "2 Pedro 1:11" },
+            { texto: "Porque Cristo é a esperança de glória nos nossos corações.", referencia: "Colossenses 1:27" },
+            { texto: "Porque Cristo é a Cabeça de todos os principados e potestades.", referencia: "Colossenses 2:10" },
+            { texto: "Porque Cristo é o Alfa e o Ômega, o começo e o fim.", referencia: "Apocalipse 21:6" },
+            { texto: "Porque no Seu reino não haverá mais morte, nem pranto, nem dor.", referencia: "Apocalipse 21:4" },
+            { texto: "Porque a Sua graça nos foi dada antes do tempo dos séculos.", referencia: "2 Timóteo 1:9" },
+            { texto: "Porque Ele mesmo disse: Nunca te deixarei, nem te desampararei.", referencia: "Hebreus 13:5" },
+            { texto: "Porque Ele é fiel e justo para nos perdoar os pecados.", referencia: "1 João 1:9" },
+            { texto: "Porque Ele nos tornou filhos de Deus e co-herdeiros com Cristo.", referencia: "Romanos 8:16-17" },
+            { texto: "Porque Ele foi ferido pelas nossas transgressões e pisado pelas nossas iniquidades.", referencia: "Isaías 53:5" },
+            { texto: "Porque a punição que nos traz paz caiu sobre Ele.", referencia: "Isaías 53:5" },
+            { texto: "Porque Ele levou em Si os nossos pecados em Seu próprio corpo na cruz.", referencia: "1 Pedro 2:24" },
+            { texto: "Porque Ele venceu a morte e nos deu a promessa da ressurreição.", referencia: "1 Coríntios 15:57" },
+            { texto: "Porque Ele preparou um lugar para nós na casa do Pai.", referencia: "João 14:2-3" },
+            { texto: "Porque Ele virá com poder e grande glória.", referencia: "Mateus 24:30" },
+            { texto: "Porque o Seu julgamento é justo e verdadeiro.", referencia: "Apocalipse 19:11" },
+            { texto: "Porque os Seus olhos varrem toda a terra para mostrar o Seu poder.", referencia: "2 Crônicas 16:9" },
+            { texto: "Porque ninguém pode arrebatar a ninguém da mão de Deus.", referencia: "João 10:28-29" },
+            { texto: "Porque o Seu reino não terá fim.", referencia: "Lucas 1:33" },
+            { texto: "Porque a Sua misericórdia é sobre aqueles que O temem.", referencia: "Salmo 103:11" },
+            { texto: "Porque a Sua graça basta para nós em toda a nossa fraqueza.", referencia: "2 Coríntios 12:9" },
+            { texto: "Porque a Sua bondade e misericórdia nos seguem todos os dias da vida.", referencia: "Salmo 23:6" },
+            { texto: "Porque a Sua palavra é uma lâmpada aos nossos pés.", referencia: "Salmo 119:105" },
+            { texto: "Porque a Sua presença nos enche de alegria.", referencia: "Salmo 16:11" },
+            { texto: "Porque em Sua presença há plenitude de alegria.", referencia: "Salmo 16:11" },
+            { texto: "Porque a Sua lealdade permanece para sempre.", referencia: "Salmo 100:5" },
+            { texto: "Porque a Sua fidelidade se estende através dos séculos.", referencia: "Salmo 119:90" },
+            { texto: "Porque para todos aqueles que creem Nele há salvação.", referencia: "Romanos 10:11" },
+            { texto: "Porque todo aquele que invocar o nome do Senhor será salvo.", referencia: "Romanos 10:13" }
+        ];
+
+        let fraseAtual = obterFraseDodia();
+
+        function obterFraseDodia() {
+            const hoje = new Date();
+            const anoNovo = new Date(hoje.getFullYear(), 0, 1);
+            const diaDoAno = Math.floor((hoje - anoNovo) / (24 * 60 * 60 * 1000)) + 1;
+            return diaDoAno - 1; // Índice da array (0-364)
+        }
+
+        function atualizarDisplay() {
+            const frase = frases[fraseAtual];
+            document.getElementById('fraseTexto').textContent = `"${frase.texto}"`;
+            document.getElementById('fraseReferencia').textContent = frase.referencia;
+            document.getElementById('diaDoAno').textContent = fraseAtual + 1;
+
+            const hoje = new Date();
+            const opcoes = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dataFormatada = hoje.toLocaleDateString('pt-BR', opcoes);
+            document.getElementById('dataAtual').textContent = dataFormatada;
+        }
+
+        function proximaFrase() {
+            if (fraseAtual < frases.length - 1) {
+                fraseAtual++;
+                atualizarDisplay();
+            }
+        }
+
+        function fraseAnterior() {
+            if (fraseAtual > 0) {
+                fraseAtual--;
+                atualizarDisplay();
+            }
+        }
+
+        function compartilhar() {
+            const frase = frases[fraseAtual];
+            const texto = `${frase.texto}\n\n${frase.referencia}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Frase Bíblica do Dia',
+                    text: texto
+                });
+            } else {
+                // Fallback para copiar para clipboard
+                navigator.clipboard.writeText(texto).then(() => {
+                    alert('Frase copiada!');
+                });
+            }
+        }
+
+        // Inicializar
+        atualizarDisplay();
+    </script>
+</body>
+</html>
